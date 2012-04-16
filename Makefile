@@ -3,9 +3,9 @@
 
 TARGET = main
 CC = g++
-OBJS = particlesystem.o pointobj.o rulerwindow.o robotarm.o rect.o point.o particle.o modelerview.o modeleruiwindows.o modelerui.o modelerdraw.o modelerapp.o linearcurveevaluator.o indicatorwindow.o graphwidget.o curveevaluator.o curve.o color.o camera.o bitmap.o 
+OBJS = particlesystem.o pointobj.o rulerwindow.o robot.o rect.o point.o particle.o modelerview.o modeleruiwindows.o modelerui.o modelerdraw.o modelerapp.o linearcurveevaluator.o indicatorwindow.o graphwidget.o curveevaluator.o curve.o color.o camera.o bitmap.o 
 # animatoruiwindows.o
-SRCS = particlesystem.cpp pointobj.cpp rulerwindow.cpp robotarm.cpp rect.cpp point.cpp particle.cpp modelerview.cpp modeleruiwindows.cxx modelerui.cpp modelerdraw.cpp modelerapp.cpp linearcurveevaluator.cpp indicatorwindow.cpp graphwidget.cpp curveevaluator.cpp curve.cpp color.cpp camera.cpp bitmap.cpp 
+SRCS = particlesystem.cpp pointobj.cpp rulerwindow.cpp robot.cpp rect.cpp point.cpp particle.cpp modelerview.cpp modeleruiwindows.cxx modelerui.cpp modelerdraw.cpp modelerapp.cpp linearcurveevaluator.cpp indicatorwindow.cpp graphwidget.cpp curveevaluator.cpp curve.cpp color.cpp camera.cpp bitmap.cpp 
 # animatoruiwindows.cxx
 CXXFLAGS = $(shell fltk-config --use-gl --use-images --cxxflags ) -I. 
 LDFLAGS = $(shell fltk-config --use-gl --use-images --ldflags ) 
@@ -28,7 +28,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 modeleruiwindows.cxx : modeleruiwindows.h modelerview.h rulerwindow.h graphwidget.h indicatorwindow.h rect.h point.h curve.h curveevaluator.h
-robotarm.cpp : modelerview.h modelerapp.h modelerdraw.h particlesystem.h vec.h
+robot.cpp : modelerview.h modelerapp.h modelerdraw.h particlesystem.h vec.h
 # animatoruiwindows.cxx : animatoruiwindows.h indicatorwindow.h rulerwindow.h graphwidget.h modelerview.h rect.h point.h curve.h curveevaluator.h
 particlesystem.cpp : particlesystem.h vec.h
 rulerwindow.cpp : rulerwindow.h

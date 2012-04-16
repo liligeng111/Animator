@@ -9,7 +9,6 @@
 #include "modelerdraw.h"
 #include "particlesystem.h"
 
-
 #include <FL/gl.h>
 #include <stdlib.h>
 

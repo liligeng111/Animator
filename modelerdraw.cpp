@@ -1,13 +1,18 @@
 #include "modelerdraw.h"
+#include "util.h"
 #include <FL/gl.h>
 #include <GL/glu.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <math.h>
+#include "bitmap.h"
 
 // ********************************************************
 // Support functions from previous version of modeler
 // ********************************************************
+#define PI 3.14159265
+
 void _dump_current_modelview( void )
 {
     ModelerDrawState *mds = ModelerDrawState::Instance();
@@ -154,9 +159,9 @@ bool openRayFile(const char rayFileName[])
     if (mds->m_rayFile != NULL) 
     {
         fprintf( mds->m_rayFile, "SBT-raytracer 1.0\n\n" );
-        fprintf( mds->m_rayFile, "camera { fov=30; }\n\n" );
+        fprintf( mds->m_rayFile, "camera { fov=30; position=(0,0.8,5); direction=(0,-0.8,-5); }\n\n" );
         fprintf( mds->m_rayFile, 
-            "directional_light { direction=(-1,-1,-1); color=(0.7,0.7,0.7); }\n\n" );
+            "directional_light { direction=(-1,-2,-1); color=(0.7,0.7,0.7); }\n\n" );
         return true;
     }
     else
@@ -233,6 +238,78 @@ void drawSphere(double r)
     }
 }
 
+void drawTorus(float R, float r)
+{
+    ModelerDrawState *mds = ModelerDrawState::Instance();
+
+	_setupOpenGl();
+    
+    if (mds->m_rayFile)
+    {
+        _dump_current_modelview();
+        fprintf(mds->m_rayFile,  
+            "what the fuck is this");
+        _dump_current_material();
+        fprintf(mds->m_rayFile,  "})))\n" );
+    }
+    else
+    {
+        /* remember which matrix mode OpenGL was in. */
+        int savemode;
+        glGetIntegerv( GL_MATRIX_MODE, &savemode );
+        
+        /* switch to the model matrix and scale by x,y,z. */
+		int n;
+		
+		switch(mds->m_quality)
+		{
+		case HIGH: 
+			n = 32; break;
+		case MEDIUM: 
+			n = 20; break;
+		case LOW:
+			n = 12; break;
+		case POOR:
+			n = 8; break;
+		}
+		
+		int N = 2 * n;
+    glMatrixMode( GL_MODELVIEW );
+    glPushMatrix();
+    glPushAttrib(GL_CURRENT_BIT);
+
+		for (int j = 0; j < N; j++)
+		{
+			glRotated(360.0f / N, 0 ,1, 0);
+			float next_Cos = cos(2 * PI * (0 + 1) / N);
+			float next_Sin = sin(2 * PI * (0 + 1) / N);
+
+			glBindTexture(GL_TEXTURE_2D, 1);
+			glBegin(GL_TRIANGLE_STRIP);
+        
+			for (int i = 0; i < n + 1; i++)
+			{
+				float Sin = sin(2 * PI * i / n);
+				float Cos = cos(2 * PI * i / n);
+				glNormal3d(Cos, Sin, 0);
+				glTexCoord2f (0.0f, 1.0f * i / n);
+				glVertex3d(R + Cos * r, Sin * r, 0);
+				
+				glNormal3d(Cos * next_Cos, Sin, Cos * next_Sin);
+				glTexCoord2f(1.0f, 1.0f * i / n);
+				glVertex3d(next_Cos * R + Cos * r * next_Cos, Sin * r, next_Sin * R + Cos * r * next_Sin);
+			}
+        
+			glEnd();
+		}
+        
+        /* restore the model matrix stack, and switch back to the matrix
+        mode we were in. */
+        glPopMatrix();
+        glPopAttrib();
+        glMatrixMode( savemode );
+    }
+}
 
 void drawBox( double x, double y, double z )
 {
@@ -416,3 +493,92 @@ void drawTriangle( double x1, double y1, double z1,
         glEnd();
     }
 }
+
+void drawSierpinskiTriangle( double x1, double y1, double z1,
+                   double x2, double y2, double z2,
+                   double x3, double y3, double z3, int depth )
+{
+	if (depth == 0)
+	{
+		drawTriangle(x1, y1, z1,
+                     x2, y2, z2,
+                     x3, y3, z3);
+	}
+	else 
+	{
+		drawSierpinskiTriangle(x1, y1, z1,
+                   (x2 + x1) / 2, (y2 + y1) / 2, (z2 + z1) / 2,
+                   (x3 + x1) / 2, (y3 + y1) / 2, (z3 + z1) / 2, depth - 1);
+
+		drawSierpinskiTriangle((x2 + x1) / 2, (y2 + y1) / 2, (z2 + z1) / 2,
+                   x2, y2, z2,
+                   (x2 + x3) / 2, (y2 + y3) / 2, (z2 + z3) / 2, depth - 1);
+		
+		drawSierpinskiTriangle((x3 + x1) / 2, (y3+ y1) / 2, (z3 + z1) / 2,
+                   (x2 + x3) / 2, (y2 + y3) / 2, (z2 + z3) / 2,
+                   x3, y3, z3, depth - 1);
+	}
+}
+
+
+void drawPolygon(int n, float a)
+{
+	ModelerDrawState *mds = ModelerDrawState::Instance();
+
+	_setupOpenGl();
+
+    if (mds->m_rayFile)
+    {
+        _dump_current_modelview();
+        fprintf(mds->m_rayFile, 
+            "polymesh { points=((%f,%f,%f),(%f,%f,%f),(%f,%f,%f)); faces=((0,1,2));\n");
+        _dump_current_material();
+        fprintf(mds->m_rayFile, "})\n" );
+    }
+    else
+    {
+        
+		loadTexture();
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, mds->texture[0]);
+        glBegin( GL_POLYGON );
+        glNormal3d(0, 1, 0 );
+		for (int i = 0; i < n; i++)
+		{			
+			glTexCoord2f (cos(2 * PI * i / n), sin(2 * PI * i / n));
+			glVertex3d(a * cos(2 * PI * i / n), 0, a * sin(2 * PI * i / n));
+		}
+        glEnd();
+		glDisable(GL_TEXTURE_2D);
+    }
+}
+
+void loadTexture()
+{	
+	static bool init = true;
+	if (!init)
+	{
+		return;
+	}
+	init = false;
+	
+	ModelerDrawState *mds = ModelerDrawState::Instance();
+	mds->texture = new GLuint[10];
+	glEnable (GL_TEXTURE_2D);
+	glGenTextures(1, mds->texture);
+	glBindTexture(GL_TEXTURE_2D, mds->texture[0]);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	int height;
+	int width;
+	unsigned char* data = readBMP("res/01.bmp", width, height);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glDisable(GL_TEXTURE_2D);
+	delete []data;
+}
+

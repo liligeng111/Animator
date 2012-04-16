@@ -8,6 +8,8 @@
 #include <FL/gl.h>
 #include <cstdio>
 
+#include "modelerglobals.h"
+
 
 enum DrawModeSetting_t 
 { NONE=0, NORMAL, WIREFRAME, FLATSHADE, };
@@ -33,6 +35,7 @@ public:
 	GLfloat m_specularColor[4];
 	GLfloat m_shininess;
 
+	GLuint* texture;
 private:
 	ModelerDrawState();
 	ModelerDrawState(const ModelerDrawState &) {}
@@ -78,6 +81,8 @@ void closeRayFile();
 // Draw a sphere of radius r
 void drawSphere(double r);
 
+void drawTorus(float R, float r);
+
 // Draw an axis-aligned box from origin to (x,y,z)
 void drawBox( double x, double y, double z );
 
@@ -91,5 +96,13 @@ void drawCylinder( double h, double r1, double r2 );
 void drawTriangle( double x1, double y1, double z1,
 			       double x2, double y2, double z2,
 			       double x3, double y3, double z3 );
+
+void drawSierpinskiTriangle( double x1, double y1, double z1,
+			       double x2, double y2, double z2,
+			       double x3, double y3, double z3, int depth );
+
+void loadTexture();
+
+void drawPolygon(int n, float a);
 
 #endif
