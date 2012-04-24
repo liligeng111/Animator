@@ -29,9 +29,10 @@ ModelerView::~ModelerView()
 	delete m_ctrl_camera;
 	delete m_curve_camera;
 }
+
 int ModelerView::handle(int event)
 {
-    unsigned eventCoordX = Fl::event_x();
+  unsigned eventCoordX = Fl::event_x();
 	unsigned eventCoordY = Fl::event_y();
 	unsigned eventButton = Fl::event_button();
 	unsigned eventState  = Fl::event_state();
@@ -97,13 +98,15 @@ void ModelerView::draw()
     {
         glShadeModel( GL_SMOOTH );
         glEnable( GL_DEPTH_TEST );
+
         glEnable( GL_LIGHTING );
-		glEnable( GL_LIGHT0 );
+        glEnable( GL_LIGHT0 );
         glEnable( GL_LIGHT1 );
-		glEnable( GL_NORMALIZE );
+
+        glEnable( GL_NORMALIZE );
     }
 
-  	glViewport( 0, 0, w(), h() );
+  glViewport( 0, 0, w(), h() );
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(30.0,float(w())/float(h()),1.0,100.0);
@@ -111,12 +114,13 @@ void ModelerView::draw()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_camera->applyViewingTransform();
 
-    glLightfv( GL_LIGHT0, GL_POSITION, lightPosition0 );
-    glLightfv( GL_LIGHT0, GL_DIFFUSE, lightDiffuse0 );
-    glLightfv( GL_LIGHT1, GL_POSITION, lightPosition1 );
-    glLightfv( GL_LIGHT1, GL_DIFFUSE, lightDiffuse1 );
+  m_camera->applyViewingTransform();
+
+  glLightfv( GL_LIGHT0, GL_POSITION, lightPosition0 );
+  glLightfv( GL_LIGHT0, GL_DIFFUSE, lightDiffuse0 );
+  glLightfv( GL_LIGHT1, GL_POSITION, lightPosition1 );
+  glLightfv( GL_LIGHT1, GL_DIFFUSE, lightDiffuse1 );
 
 	// If particle system exists, draw it
 	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();

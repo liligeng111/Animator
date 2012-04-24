@@ -56,51 +56,15 @@ void drawTail()
 void drawWedge() {
 }
 
-void swing(int control, double max, double min, double gap)
-{
-	static bool direction[NUMCONTROLS] = {};
-  /*
-	if (ModelerApplication::Instance()->GetAnimating())
-	{
-		double value = VAL(control);
-
-		if (direction[control]) value += gap;
-		else value -= gap;
-		if (value >= MAX(control)) 
-		{
-			value = MAX(control);
-			direction[control] = 0;
-		}
-		if (value <= MIN(control)) 
-		{
-			value = MIN(control);
-			direction[control] = 1;
-		}
-		SETVAL(control, value);
-	}
-  */
-}
 
 void SampleModel::draw()
 {
 
-    // This call takes care of a lot of the nasty projection 
-    // matrix stuff.  Unless you want to fudge directly with the 
+  // This call takes care of a lot of the nasty projection 
+  // matrix stuff.  Unless you want to fudge directly with the 
 	// projection matrix, don't bother with this ...
-    ModelerView::draw();
+  ModelerView::draw();
 	
-	//static long time = 0;
-	//time++;
-
-  /*
-	swing(LEFT_UPPER_ARM_ROTATE_X, MAX(LEFT_UPPER_ARM_ROTATE_X), MIN(LEFT_UPPER_ARM_ROTATE_X), 3.1);
-	swing(LEFT_UPPER_ARM_ROTATE_Y, MAX(LEFT_UPPER_ARM_ROTATE_Y), MIN(LEFT_UPPER_ARM_ROTATE_Y), 2.5);
-
-	swing(HEAD_ROTATE, MAX(HEAD_ROTATE), MIN(HEAD_ROTATE), 1);
-
-	swing(RIGHT_UPPER_ARM_ROTATE_X, MAX(RIGHT_UPPER_ARM_ROTATE_X), MIN(RIGHT_UPPER_ARM_ROTATE_X), 1.1);
-	swing(RIGHT_UPPER_ARM_ROTATE_Y, MAX(RIGHT_UPPER_ARM_ROTATE_Y), MIN(RIGHT_UPPER_ARM_ROTATE_Y), 4.5);
-  */
 
 	// draw the floor
   // let's make it big !!!
@@ -113,7 +77,7 @@ void SampleModel::draw()
 							-0.866025404, 0, -0.5,
 							VAL(CARPET_DEPTH));
 
-	  glTranslated(0, -0.05, 0);
+  glTranslated(0, -0.05, 0);
 	setDiffuseColor(COLOR_RED);
 	drawPolygon(7, 2);
 	glPopMatrix();

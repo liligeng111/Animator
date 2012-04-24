@@ -64,15 +64,15 @@ ModelerApplication* ModelerApplication::Instance()
 void ModelerApplication::Init(ModelerViewCreator_f createView, 
                               const ModelerControl controls[], unsigned numControls)
 {
-    int i;
+  int i;
 
 	m_animating   = false;
 	m_numControls = numControls;
 
 	// DWORD dwBtnFaceColor = GetSysColor(COLOR_BTNFACE);
-
 	// Get consistent background color
 	// Fl::background(GetRValue(dwBtnFaceColor), GetGValue(dwBtnFaceColor), GetBValue(dwBtnFaceColor));
+  // this just doesn't matter
 
     // ********************************************************
     // Create the FLTK user interface
@@ -83,7 +83,7 @@ void ModelerApplication::Init(ModelerViewCreator_f createView,
     // For each control, add appropriate objects to the user interface
     for (i=0; i<m_numControls; i++)
     {
-		m_ui->addControl(controls[i].m_name, 
+      m_ui->addControl(controls[i].m_name, 
 			controls[i].m_minimum, controls[i].m_maximum,
 			controls[i].m_stepsize, controls[i].m_value);
     }
@@ -109,8 +109,8 @@ int ModelerApplication::Run()
 		return -1;
 	}
 
-    // Just tell FLTK to go for it.
-   	Fl::visual( FL_RGB | FL_DOUBLE );
+  // Just tell FLTK to go for it.
+  Fl::visual( FL_RGB | FL_DOUBLE );
 	m_ui->show();
 	Fl::add_timeout(0, ModelerApplication::RedrawLoop, NULL);
 

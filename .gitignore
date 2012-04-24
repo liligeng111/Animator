@@ -29,6 +29,7 @@ ipch/
 *.ncb
 *.bmp
 *.orig
+*.swp
 obj/
 [Rr]elease*/
 [Dd]ebug*/
