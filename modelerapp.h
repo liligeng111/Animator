@@ -49,8 +49,8 @@ public:
 	int  Run();
 
     // Get and set slider values.
-    double GetControlValue(int controlNumber);
-    void   SetControlValue(int controlNumber, double value);
+  double GetControlValue(int controlNumber);
+  void   SetControlValue(int controlNumber, double value);
 
 	// Get and set particle system
 	ParticleSystem *GetParticleSystem();

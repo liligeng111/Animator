@@ -3,9 +3,9 @@
 
 TARGET = main
 CC = g++
-OBJS = particlesystem.o pointobj.o rulerwindow.o robot.o rect.o point.o particle.o modelerview.o modeleruiwindows.o modelerui.o modelerdraw.o modelerapp.o linearcurveevaluator.o indicatorwindow.o graphwidget.o curveevaluator.o curve.o color.o camera.o bitmap.o 
+OBJS = particlesystem.o pointobj.o rulerwindow.o robot.o rect.o point.o particle.o modelerview.o modeleruiwindows.o modelerui.o modelerdraw.o modelerapp.o linearcurveevaluator.o indicatorwindow.o graphwidget.o curveevaluator.o curve.o color.o camera.o bitmap.o bsplinecurveevaluator.o beziercurveevaluator.o catmullcurveevaluator.o c2curveevaluator.o
 # animatoruiwindows.o
-SRCS = particlesystem.cpp pointobj.cpp rulerwindow.cpp robot.cpp rect.cpp point.cpp particle.cpp modelerview.cpp modeleruiwindows.cxx modelerui.cpp modelerdraw.cpp modelerapp.cpp linearcurveevaluator.cpp indicatorwindow.cpp graphwidget.cpp curveevaluator.cpp curve.cpp color.cpp camera.cpp bitmap.cpp 
+SRCS = particlesystem.cpp pointobj.cpp rulerwindow.cpp robot.cpp rect.cpp point.cpp particle.cpp modelerview.cpp modeleruiwindows.cxx modelerui.cpp modelerdraw.cpp modelerapp.cpp linearcurveevaluator.cpp indicatorwindow.cpp graphwidget.cpp curveevaluator.cpp curve.cpp color.cpp camera.cpp bitmap.cpp  bsplinecurveevaluator.cpp beziercurveevaluator.cpp catmullcurveevaluator.cpp c2curveevaluator.cpp
 # animatoruiwindows.cxx
 CXXFLAGS = $(shell fltk-config --use-gl --use-images --cxxflags ) -I. 
 LDFLAGS = $(shell fltk-config --use-gl --use-images --ldflags ) 
@@ -33,6 +33,10 @@ robot.cpp : modelerview.h modelerapp.h modelerdraw.h particlesystem.h vec.h
 particlesystem.cpp : particlesystem.h vec.h
 rulerwindow.cpp : rulerwindow.h
 linearcurveevaluator.cpp : linearcurveevaluator.h curveevaluator.h curve.h point.h
+beziercurveevaluator.cpp : beziercurveevaluator.h curveevaluator.h curve.h point.h
+bsplinecurveevaluator.cpp : bsplinecurveevaluator.h curveevaluator.h curve.h point.h
+catmullcurveevaluator.cpp : catmullcurveevaluator.h curveevaluator.h curve.h point.h
+c2curveevaluator.cpp : c2curveevaluator.h curveevaluator.h curve.h point.h
 pointobj.cpp : 
 curveevaluator.cpp : curveevaluator.h curve.h point.h
 particle.cpp : 
@@ -44,9 +48,11 @@ rect.cpp : rect.h
 modelerui.cpp : modelerui.h camera.h modelerview.h modelerdraw.h modelerapp.h particlesystem.h modeleruiwindows.h vec.h mat.h rect.h point.h curve.h curveevaluator.h rulerwindow.h graphwidget.h indicatorwindow.h
 curve.cpp : curve.h curve.h curveevaluator.h point.h
 modelerdraw.cpp : modelerdraw.h
-graphwidget.cpp : graphwidget.h linearcurveevaluator.h rect.h point.h curve.h curveevaluator.h
+graphwidget.h : graphwidget.h linearcurveevaluator.h rect.h point.h curve.h curveevaluator.h bsplinecurveevaluator.h beziercurveevaluator.h catmullcurveevaluator.h c2curveevaluator.h
+
 point.cpp : point.h
-camera.cpp : camera.h curve.h curveevaluator.h linearcurveevaluator.h vec.h mat.h rect.h point.h
+camera.h : camera.h curve.h curveevaluator.h linearcurveevaluator.h vec.h mat.h rect.h point.h bsplinecurveevaluator.h beziercurveevaluator.h catmullcurveevaluator.h c2curveevaluator.h
+
 bitmap.cpp : bitmap.h
 
 clean:

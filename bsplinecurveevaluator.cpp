@@ -1,7 +1,7 @@
-#include "linearcurveevaluator.h"
+#include "bsplinecurveevaluator.h"
 #include <assert.h>
 
-void LinearCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
+void BSplineCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
 										 std::vector<Point>& ptvEvaluatedCurvePts, 
 										 const float& fAniLength, 
 										 const bool& bWrap) const

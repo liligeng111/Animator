@@ -73,6 +73,7 @@ protected:
 };
 
 typedef std::vector<int> int_vector;
+// what does this for?
 
 class GraphWidget : public Fl_Gl_Window
 {

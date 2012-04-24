@@ -27,6 +27,7 @@ int stricmp(const char* stra, const char* strb);
 class ModelerUI : public ModelerUIWindows
 {
 public:
+  // what does this mean?
 	typedef void (ValueChangedCallback)();
 
 	ModelerUI();

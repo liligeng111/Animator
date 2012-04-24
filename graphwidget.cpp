@@ -27,6 +27,10 @@
 #include "graphwidget.h"
 
 #include "linearcurveevaluator.h"
+#include "catmullcurveevaluator.h"
+#include "bsplinecurveevaluator.h"
+#include "beziercurveevaluator.h"
+#include "c2curveevaluator.h"
  
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -120,11 +124,11 @@ m_flcCurrCurve(FL_BLACK)
 	m_ppceCurveEvaluators[CURVE_TYPE_LINEAR] = new LinearCurveEvaluator();
 
 	// TODO: replace the linear evaluator for one of the three types of curves
-	m_ppceCurveEvaluators[CURVE_TYPE_BSPLINE] = new LinearCurveEvaluator();
-	m_ppceCurveEvaluators[CURVE_TYPE_BEZIER] = new LinearCurveEvaluator();
-	m_ppceCurveEvaluators[CURVE_TYPE_CATMULLROM] = new LinearCurveEvaluator();
+	m_ppceCurveEvaluators[CURVE_TYPE_BSPLINE] = new BSplineCurveEvaluator();
+	m_ppceCurveEvaluators[CURVE_TYPE_BEZIER] = new BezierCurveEvaluator();
+	m_ppceCurveEvaluators[CURVE_TYPE_CATMULLROM] = new CatmullCurveEvaluator();
 	// Note that C2-Interpolating curve is not a requirement
-	m_ppceCurveEvaluators[CURVE_TYPE_C2INTERPOLATING] = new LinearCurveEvaluator();
+	m_ppceCurveEvaluators[CURVE_TYPE_C2INTERPOLATING] = new C2CurveEvaluator();
 
 }
 
