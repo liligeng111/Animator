@@ -1,48 +1,59 @@
 #include "catmullcurveevaluator.h"
 #include <assert.h>
 
+Mat4<float> CatmullCurveEvaluator::m_basisMatrix = Mat4<float>(-1, 3, -3, 1, 2, -5, 4, -1, -1, 0, 1, 0, 0, 2, 0, 0);
+
+inline float float_module(const float f, const float d) {
+  return f < d ? f : f * (f / d - (int)(f / d));
+}
+
+void CatmullCurveEvaluator::evaluate(const int p1, const int p2, const int p3, const int p4, const float& fAniLength,
+    const std::vector<Point>& ptvCtrlPts, std::vector<Point>& ptvEvaluatedCurvePts)const {
+  float t, y, x;
+  Vec4<float> vec = m_basisMatrix * Vec4<float>( 
+      ptvCtrlPts[p1].y, 
+      ptvCtrlPts[p2].y, 
+      ptvCtrlPts[p3].y, 
+      ptvCtrlPts[p4].y
+      );
+  for (int j = 0; j < 100; j++) {
+    t = j / 100.0f;
+    y = Vec4<float>(t * t * t, t * t, t, 1) * vec;
+    y *= 0.5f;
+    float len = ptvCtrlPts[p3].x - ptvCtrlPts[p2].x;
+    // quick fix
+    if (len < 0) len += fAniLength;
+    x = ptvCtrlPts[p2].x + t * len;
+    if (x > fAniLength) {
+      x = float_module(x, fAniLength);
+    }
+    ptvEvaluatedCurvePts.push_back(Point(x, y));
+  }
+}
+
 void CatmullCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
 										 std::vector<Point>& ptvEvaluatedCurvePts, 
 										 const float& fAniLength, 
 										 const bool& bWrap) const
 {
-	int iCtrlPtCount = ptvCtrlPts.size();
+	int iCtrlPtCount = ptvCtrlPts.size(); 
+  // return if not enough points
+  if (iCtrlPtCount < 4) return;
 
 	ptvEvaluatedCurvePts.assign(ptvCtrlPts.begin(), ptvCtrlPts.end());
 
-	float x = 0.0;
-	float y1;
+  for (int i = 1; i < iCtrlPtCount - 3; i++) {
+    // compute for interval (i, i + 1)
+    this->evaluate(i - 1, i, i + 1, i + 2, fAniLength, ptvCtrlPts, ptvEvaluatedCurvePts);
+  }
 
 	if (bWrap) {
-		// if wrapping is on, interpolate the y value at xmin and
-		// xmax so that the slopes of the lines adjacent to the
-		// wraparound are equal.
-
-		if ((ptvCtrlPts[0].x + fAniLength) - ptvCtrlPts[iCtrlPtCount - 1].x > 0.0f) {
-			y1 = (ptvCtrlPts[0].y * (fAniLength - ptvCtrlPts[iCtrlPtCount - 1].x) + 
-				  ptvCtrlPts[iCtrlPtCount - 1].y * ptvCtrlPts[0].x) /
-				 (ptvCtrlPts[0].x + fAniLength - ptvCtrlPts[iCtrlPtCount - 1].x);
-		}
-		else 
-			y1 = ptvCtrlPts[0].y;
-	}
-	else {
-		// if wrapping is off, make the first and last segments of
-		// the curve horizontal.
-
-		y1 = ptvCtrlPts[0].y;
+    for (int i = iCtrlPtCount - 2; i < iCtrlPtCount + 1; i++) {
+      evaluate((i - 1) % iCtrlPtCount, 
+                i % iCtrlPtCount,
+                (i + 1) % iCtrlPtCount,
+                (i + 2) % iCtrlPtCount,
+                fAniLength, ptvCtrlPts, ptvEvaluatedCurvePts);
+    }
   }
-
-	ptvEvaluatedCurvePts.push_back(Point(x, y1));
-
-	/// set the endpoint based on the wrap flag.
-	float y2;
-  x = fAniLength;
-  if (bWrap) {
-    y2 = y1;
-  } else {
-    y2 = ptvCtrlPts[iCtrlPtCount - 1].y;
-  }
-
-	ptvEvaluatedCurvePts.push_back(Point(x, y2));
 }

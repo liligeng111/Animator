@@ -253,6 +253,9 @@ public:
 	template <class U> friend Mat4<U> operator +( const Mat4<U>& a, const Mat4<U>& b );
 	template <class U> friend Mat4<U> operator -( const Mat4<U>& a, const Mat4<U>& b );
 	template <class U> friend Mat4<U> operator *( const Mat4<U>& a, const Mat4<U>& b );
+  
+	template <class U> friend Vec4<U> operator *( const Mat4<U>& a, const Vec4<U>& b );
+
 	template <class U> friend Mat4<U> operator *( const Mat4<U>& a, const double d );
 	template <class U> friend Mat4<U> operator *( const double d, const Mat4<U>& a );
 	template <class U> friend Vec3<U> operator *( const Mat4<U>& a, const Vec3<U>& b );
@@ -491,5 +494,17 @@ template <class T>
 inline bool operator !=( const Mat4<T>& a, const Mat4<T>& b ) {
 	return memcmp(a.n,b.n,16*sizeof(T));
 }
+
+/*
+template <class U> 
+inline Vec4<U> operator *( const Mat4<U>& a, const Vec4<U>& b ) {
+  return Vec4<U>(
+      a.n[0] * b.n[0]+ a.n[1] * b.n[1]+ a.n[2] * b.n[2]+ a.n[3] * b.n[3], 
+      a.n[4] * b.n[0]+ a.n[5] * b.n[1]+ a.n[6] * b.n[2]+ a.n[7] * b.n[3], 
+      a.n[8] * b.n[0]+ a.n[9] * b.n[1]+ a.n[10] * b.n[2]+ a.n[11] * b.n[3], 
+      a.n[12] * b.n[0]+ a.n[13] * b.n[1]+ a.n[14] * b.n[2]+ a.n[15] * b.n[3]
+      );
+}
+*/
 
 #endif
