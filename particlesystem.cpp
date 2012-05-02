@@ -9,6 +9,7 @@
 #include <math.h>
 #include <limits.h>
 
+const Vec3f ParticleSystem::g = Vec3f(0, -9.8, 0);
 
 /***************
  * Constructors
@@ -16,11 +17,9 @@
 
 ParticleSystem::ParticleSystem() 
 {
-	// TODO
-
+	time = 0;
+	last_particle = 0;
 }
-
-
 
 
 
@@ -32,6 +31,15 @@ ParticleSystem::~ParticleSystem()
 {
 	// TODO
 
+}
+
+void ParticleSystem::addParticle(Vec4f p)
+{
+	if (time - last_particle > 0.01)
+	{
+		last_particle = time;
+		particles.push_back(Particle(p[0], p[1], p[2], time));
+	}
 }
 
 
@@ -84,16 +92,25 @@ void ParticleSystem::resetSimulation(float t)
 /** Compute forces and update particles **/
 void ParticleSystem::computeForcesAndUpdateParticles(float t)
 {
+	time = t;
+	if (!simulate) return;
 
-	// TODO
+	for (int i = 0; i < particles.size(); i++)
+	{
+		if (!particles[i].too_far()) particles[i].applyForce(g, t);
+	}
 }
 
 
 /** Render particles */
 void ParticleSystem::drawParticles(float t)
 {
-
-	// TODO
+	time = t;
+	for (int i = 0; i < particles.size(); i++)
+	{
+		//printf("%d size: %d\n", i, particles.size());
+		if (!particles[i].too_far()) particles[i].draw();
+	}
 }
 
 

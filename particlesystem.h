@@ -17,7 +17,8 @@
 #define __PARTICLE_SYSTEM_H__
 
 #include "vec.h"
-
+#include <vector>
+#include "particle.h"
 
 
 class ParticleSystem {
@@ -32,6 +33,8 @@ public:
 
 	/** Destructor **/
 	virtual ~ParticleSystem();
+
+	virtual void addParticle(Vec4f pos);
 
 	/** Simulation fxns **/
 	// This fxn should render all particles in the system,
@@ -64,6 +67,7 @@ public:
 
 
 
+
 	// These accessor fxns are implemented for you
 	float getBakeStartTime() { return bake_start_time; }
 	float getBakeEndTime() { return bake_end_time; }
@@ -76,7 +80,11 @@ public:
 
 protected:
 	
+	static const Vec3f g;
+	float time;
+	float last_particle;
 
+	vector<Particle> particles;
 
 	/** Some baking-related state **/
 	float bake_fps;						// frame rate at which simulation was baked

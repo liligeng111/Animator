@@ -4,9 +4,14 @@
 #include "modelerapp.h"
 #include "modelerdraw.h"
 #include "modelerglobals.h"
+#include "particlesystem.h"
 
 #include <FL/gl.h>
+#include "mat.h"
 #include <math.h>
+
+Mat4f getModelViewMatrix();
+void SpawnParticles( Mat4f cameraTransform );
 
 // To make a SampleModel, we inherit off of ModelerView
 class SampleModel : public ModelerView 
@@ -65,6 +70,7 @@ void SampleModel::draw()
 	// projection matrix, don't bother with this ...
   ModelerView::draw();
 	
+  Mat4f CameraMatrix = getModelViewMatrix();
 
 	// draw the floor
   // let's make it big !!!
@@ -112,6 +118,10 @@ void SampleModel::draw()
 		glTranslated(0, VAL(LEG_LENGTH) + 0.05 + VAL(HEIGHT) + 0.05 + VAL(HEAD_SIZE), 0);
 		glRotated(VAL(HEAD_ROTATE), 0.0, 1.0, 0.0);
 		drawSphere(VAL(HEAD_SIZE));
+			glPushMatrix();			
+			glTranslated(0, VAL(HEAD_SIZE), 0);
+				SpawnParticles( CameraMatrix );
+			glPopMatrix();
 		if (VAL(DETAILS) > 2) {
 			drawRoundCylinder(VAL(HEAD_SIZE) * 1.1, 0.2, 0.2);
 		glPushMatrix();
@@ -237,6 +247,7 @@ void SampleModel::draw()
 		glPopMatrix();
 
 	glPopMatrix();
+	endDraw();
 }
 
 int main()
@@ -285,7 +296,46 @@ int main()
     controls[TORUS_r] = ModelerControl("Torus r", 0, 10, 0.1f, 0.15);
 
     controls[DETAILS] = ModelerControl("Details", 1, 3, 1, 3);
+
+	ParticleSystem *ps = new ParticleSystem();	
+	ModelerApplication::Instance()->SetParticleSystem(ps);
 	
     ModelerApplication::Instance()->Init(&createSampleModel, controls, NUMCONTROLS);
     return ModelerApplication::Instance()->Run();
+}
+
+
+
+Mat4f getModelViewMatrix()
+{
+	/**************************
+	**
+	**	GET THE OPENGL MODELVIEW MATRIX
+	**
+	**	Since OpenGL stores it's matricies in
+	**	column major order and our library
+	**	use row major order, we will need to
+	**	transpose what OpenGL gives us before returning.
+	**
+	**	Hint:  Use look up glGetFloatv or glGetDoublev
+	**	for how to get these values from OpenGL.
+	**
+	*******************************/
+
+        GLfloat m[16];
+        glGetFloatv(GL_MODELVIEW_MATRIX, m);
+        Mat4f matMV(m[0], m[1], m[2], m[3],
+            m[4], m[5], m[6], m[7],
+            m[8], m[9], m[10], m[11],
+            m[12], m[13], m[14], m[15] );
+
+        return matMV.transpose(); // convert to row major
+}
+
+
+void SpawnParticles( Mat4f CameraTransforms )
+{	
+	Mat4f WorldMatrix = CameraTransforms.inverse() * getModelViewMatrix();
+	Vec4f WorldPoint = WorldMatrix * Vec4f(0, 0, 0, 1);
+	ModelerApplication::Instance()->GetParticleSystem()->addParticle(WorldPoint);
 }
