@@ -17,8 +17,6 @@ const Vec3f ParticleSystem::g = Vec3f(0, -9.8, 0);
 
 ParticleSystem::ParticleSystem() 
 {
-	time = 0;
-	last_particle = 0;
 }
 
 
@@ -50,8 +48,10 @@ void ParticleSystem::addParticle(Vec4f p)
 /** Start the simulation */
 void ParticleSystem::startSimulation(float t)
 {
-    
-	// TODO
+	time = t;
+	last_particle = t;
+	particles = vector<Particle>();
+	bake_start_time = t;
 
 	// These values are used by the UI ...
 	// -ve bake_end_time indicates that simulation
@@ -69,7 +69,7 @@ void ParticleSystem::startSimulation(float t)
 void ParticleSystem::stopSimulation(float t)
 {
     
-	// TODO
+	bake_end_time = t;
 
 	// These values are used by the UI
 	simulate = false;
@@ -80,8 +80,9 @@ void ParticleSystem::stopSimulation(float t)
 /** Reset the simulation */
 void ParticleSystem::resetSimulation(float t)
 {
-    
-	// TODO
+	time = t;
+	last_particle = t;
+	particles = vector<Particle>();
 
 	// These values are used by the UI
 	simulate = false;
@@ -99,6 +100,8 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 	{
 		if (!particles[i].too_far()) particles[i].applyForce(g, t);
 	}
+
+	bakeParticles(t);
 }
 
 
@@ -106,10 +109,20 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 void ParticleSystem::drawParticles(float t)
 {
 	time = t;
-	for (int i = 0; i < particles.size(); i++)
+	if (bake_end_time == -1)
 	{
-		//printf("%d size: %d\n", i, particles.size());
-		if (!particles[i].too_far()) particles[i].draw();
+		for (int i = 0; i < particles.size(); i++)
+		{
+			if (!particles[i].too_far()) particles[i].draw();
+		}
+	}
+
+	if (t <= bake_start_time || t >= bake_end_time) return;
+	int j = bake.size() * (t - bake_start_time) / (bake_end_time - bake_start_time);
+	//printf("%d : %d : %f : %f : %f\n", j, bake.size(), t, bake_start_time, bake_end_time);
+	for (int i = 0; i < bake[j].size(); i++)
+	{
+		if (!bake[j][i].too_far()) bake[j][i].draw();
 	}
 }
 
@@ -121,15 +134,14 @@ void ParticleSystem::drawParticles(float t)
   * your data structure for storing baked particles **/
 void ParticleSystem::bakeParticles(float t) 
 {
-
-	// TODO
+	bake.push_back(particles);
 }
 
 /** Clears out your data structure of baked particles */
 void ParticleSystem::clearBaked()
 {
 
-	// TODO
+	bake = vector<vector<Particle>>();
 }
 
 

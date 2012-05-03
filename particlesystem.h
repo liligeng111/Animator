@@ -84,6 +84,7 @@ protected:
 	float time;
 	float last_particle;
 
+	vector<vector<Particle>> bake;
 	vector<Particle> particles;
 
 	/** Some baking-related state **/
