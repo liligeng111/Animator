@@ -119,7 +119,7 @@ void SampleModel::draw()
 		glRotated(VAL(HEAD_ROTATE), 0.0, 1.0, 0.0);
 		drawSphere(VAL(HEAD_SIZE));
 			glPushMatrix();			
-			glTranslated(0, VAL(HEAD_SIZE), 0);
+			glTranslated(0, -VAL(HEAD_SIZE), 0);
 				SpawnParticles( CameraMatrix );
 			glPopMatrix();
 		if (VAL(DETAILS) > 2) {

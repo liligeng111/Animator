@@ -82,10 +82,11 @@ protected:
 	
 	static const Vec3f g;
 	float time;
-	float last_particle;
 
-	vector<vector<Particle>> bake;
-	vector<Particle> particles;
+	Vec3f springForce(int i, int j, const Vec3f& position);
+
+	vector<Particle**> bake;
+	Particle** particles;
 
 	/** Some baking-related state **/
 	float bake_fps;						// frame rate at which simulation was baked

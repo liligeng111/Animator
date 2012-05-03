@@ -8,12 +8,31 @@ Particle::Particle(float x, float y, float z, float t) : position(x, y, z)
 	time = t;
 }
 
-void Particle::applyForce(const Vec3f& force, float t)
+Particle::Particle()
 {
+	time = 0;
+}
+
+void Particle::setPosition(float x, float y, float z, float t)
+{
+	time = t;
+	position = Vec3f(x, y, z);
+	velocity = Vec3f(0, 0, 0);
+	force = Vec3f(0, 0, 0);
+}
+
+void Particle::applyForce(const Vec3f& f)
+{
+	force = f;
+}
+
+void Particle::move(float t)
+{	
 	float d = t - time;
-	velocity += force * d;
+	velocity += force * d * 2;
 	position += velocity * d;
 	time = t;
+	velocity *= 0.01f;
 }
 
 void Particle::draw()
